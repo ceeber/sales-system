@@ -31,11 +31,12 @@ jobs:
         working-directory: ./auth-service
         run: mvn clean verify
 
-        name: Upload do JAR
+      - name: Upload do JAR
         uses: actions/upload-artifact@v4
         with:
           name: auth-service-jar
           path: auth-service/target/*.jar
+
 
   api-gateway:
     name: API Gateway - Build and Test
@@ -57,7 +58,7 @@ jobs:
         working-directory: ./api-gateway
         run: mvn clean verify
 
-        name: Upload do JAR
+      - name: Upload do JAR
         uses: actions/upload-artifact@v4
         with:
           name: api-gateway-jar
@@ -89,10 +90,10 @@ jobs:
           name: api-gateway-jar
           path: api-gateway/target
 
-      - name: Build Auth Service
+      - name: Build Auth Service Docker
         working-directory: ./auth-service
         run: docker build -t auth-service:ci .
 
-      - name: Build API Gateway
+      - name: Build API Gateway Docker
         working-directory: ./api-gateway
         run: docker build -t api-gateway:ci .
