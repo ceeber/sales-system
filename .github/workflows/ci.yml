@@ -1,44 +1,53 @@
-  name: CI
+name: CI - Sales System
 
-  on:
-    push:
-      branches:
-        - main
-    pull_request:
-      branches:
-        - main
+on:
+  push:
+    branches:
+      - main
 
-  jobs:
+  pull_request:
+    branches:
+      - main
 
-    build:
+jobs:
 
-      runs-on: ubuntu-latest
+  auth-service:
+    name: Auth Service - Build and Test
+    runs-on: ubuntu-latest
 
-      steps:
+    steps:
 
-        - name: Checkout do código
-          uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Configurar Java 21
-          uses: actions/setup-java@v4
-          with:
-            java-version: '21'
-            distribution: 'temurin'
-            cache: maven
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
-        - name: Testar Auth Service
-          working-directory: auth-service
-          run: mvn clean test
+      - name: Build e testes
+        working-directory: ./auth-service
+        run: mvn clean verify
 
-        - name: Build Auth Service
-          working-directory: auth-service
-          run: mvn clean package -DskipTests
 
-        - name: Testar API Gateway
-          working-directory: api-gateway
-          run: mvn clean test
+  api-gateway:
+    name: API Gateway - Build and Test
+    runs-on: ubuntu-latest
 
-        - name: Build API Gateway
-          working-directory: api-gateway
-          run: mvn clean package -DskipTests
-  
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build e testes
+        working-directory: ./api-gateway
+        run: mvn clean verify
