@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   mysql:
@@ -25,6 +23,10 @@ services:
       timeout: 5s
       retries: 10
 
+    networks:
+      - sales-network
+
+
   redis:
     image: redis:7
     container_name: redis-sales
@@ -32,6 +34,10 @@ services:
 
     ports:
       - "6379:6379"
+
+    networks:
+      - sales-network
+
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -46,10 +52,12 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+    networks:
+      - sales-network
+
+
   auth-service:
-    build:
-      context: ../auth-service
-      dockerfile: Dockerfile
+    image: ceeber/auth-service:latest
 
     container_name: auth-service
     restart: always
@@ -68,10 +76,12 @@ services:
       mysql:
         condition: service_healthy
 
+    networks:
+      - sales-network
+
+
   api-gateway:
-    build:
-      context: ../api-gateway
-      dockerfile: Dockerfile
+    image: ceeber/api-gateway:latest
 
     container_name: api-gateway
     restart: always
@@ -86,6 +96,16 @@ services:
       auth-service:
         condition: service_started
 
+    networks:
+      - sales-network
+
+
 volumes:
 
   mysql_data:
+
+
+networks:
+
+  sales-network:
+    driver: bridge
